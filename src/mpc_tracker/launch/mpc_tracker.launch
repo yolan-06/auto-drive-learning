@@ -1,0 +1,33 @@
+<launch>
+  <arg name="waypoints_file" default="$(find mpc_tracker)/config/global_path_with_velocity.csv" />
+  
+  <arg name="mpc_horizon" default="30" />
+  <arg name="mpc_dt" default="0.1" /> 
+  <arg name="loop_rate" default="10" /> 
+  <arg name="output" default="screen" />
+
+  <node pkg="mpc_tracker" type="mpc_tracker_node" name="mpc_tracker_node"
+        output="$(arg output)" required="true">
+        
+    <param name="waypoints_file" value="$(arg waypoints_file)" />
+    <param name="mpc_horizon" value="$(arg mpc_horizon)" />
+    <param name="mpc_dt" value="$(arg mpc_dt)" />
+    <param name="loop_rate" value="$(arg loop_rate)" />
+
+    <param name="wheelbase" value="0.9" />  
+    <param name="v_max" value="2.7" />     
+    <param name="v_min" value="0.0" />   
+    <param name="delta_max" value="0.47" />  
+    <param name="delta_min" value="-0.47" /> 
+
+    <param name="q_x" value="15.0" />   
+    <param name="q_y" value="15.0" />   
+    <param name="q_yaw" value="1.0" />    
+    <param name="q_term_x" value="1.0" />
+    <param name="q_term_y" value="1.0" />
+    <param name="q_term_yaw" value="0.1" />
+
+    <param name="r_v" value="1.0" />   
+    <param name="r_delta" value="0.5" />  
+  </node>
+</launch>

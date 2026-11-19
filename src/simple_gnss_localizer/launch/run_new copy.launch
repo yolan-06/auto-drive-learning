@@ -1,0 +1,11 @@
+<launch>
+    <node pkg="gnss_localizer" type="gnss_localizer" name="gnss_localizer" output="screen">
+        <param name="save_origin" value="false"/>
+        <param name="load_origin" value="true"/>
+        <param name="ori_lat" value="24.6074802386"/>
+        <param name="ori_lon" value="118.079510137"/>
+        <param name="ori_alt" value="14.7718906403"/>
+        <param name="gnss_topic" value="/gps/fix"/>
+        <param name="imu_topic" value="/imu"/>
+    </node>
+</launch>

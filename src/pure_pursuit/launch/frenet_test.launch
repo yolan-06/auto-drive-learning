@@ -1,0 +1,47 @@
+<!-- <launch>
+    <node pkg="pure_pursuit" type="frenet_planner.py" name="frenet_planner_node" output="screen">
+        <param name="path_file" value="$(find pure_pursuit)/scripts/global_path36412.csv"/>
+
+        <param name="pose_topic" value="/gnss_pose"/>
+
+        <param name="trigger_distance" value="0.2"/>
+    </node>
+</launch> -->
+
+
+<!-- <launch>
+    <node pkg="pure_pursuit" type="frenet_planner.py" name="frenet_planner_node" output="screen">
+        <param name="path_file" value="$(find pure_pursuit)/scripts/global_path_with_velocity.csv"/>
+        <param name="pose_topic" value="/gnss_pose"/>
+        
+        <param name="trigger_distance" value="0.5"/>
+        
+        <param name="output_sl_file" value="$(find pure_pursuit)/sl_data_run_succ.csv"/>
+        <param name="output_graph_file" value="$(find pure_pursuit)/sl_graph_succ.png"/>
+    </node>
+</launch> -->
+
+
+<launch>
+    <node pkg="pure_pursuit" type="frenet_planner.py" name="frenet_planner_enhanced_node" output="screen">
+        
+        <param name="path_file" value="$(find pure_pursuit)/scripts/global_path_with_velocity.csv" />
+        
+        <param name="pose_topic"    value="/gnss_pose" />
+        <param name="odom_topic"    value="/odom" />
+        <param name="cmd_vel_topic" value="/cmd_vel" />
+        
+        <param name="output_raw_csv_file"   value="$(find pure_pursuit)/output/tracking_errors_raw.csv" />
+        <param name="output_downsampled_csv_file" value="$(find pure_pursuit)/output/tracking_errors_downsampled_1m.csv" />
+        <param name="output_graph_file"     value="$(find pure_pursuit)/output/tracking_errors.png" />
+        
+        <param name="downsample_interval" value="1.0" />
+        
+    </node>
+
+</launch>
+
+<!-- # 注意：需要将 "frenet_planner_enhanced_node" 替换为你的 launch 文件中为节点设置的名字
+rosservice call /frenet_planner_enhanced_node/toggle_logging "data: true" -->
+
+<!-- rosservice call /frenet_planner_enhanced_node/toggle_logging "data: false" -->

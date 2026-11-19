@@ -1,0 +1,64 @@
+cmake_minimum_required(VERSION 3.5...3.27)
+project(mpc_tracker)
+
+# -------------------------- catkin --------------------------
+find_package(catkin REQUIRED COMPONENTS
+  geometry_msgs
+  nav_msgs
+  roscpp
+  tf2
+  tf2_geometry_msgs
+  visualization_msgs
+)
+
+# -------------------------- 手动安装的 Eigen3 --------------------------
+add_library(Eigen3::Eigen INTERFACE IMPORTED)
+set_target_properties(Eigen3::Eigen PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/local/include/eigen3")
+set(Eigen3_FOUND TRUE)
+set(Eigen3_INCLUDE_DIRS "/usr/local/include/eigen3")
+set(Eigen3_LIBRARIES "")          # 只有头文件
+
+# -------------------------- 手动安装的 OsqpEigen -----------------------
+add_library(OsqpEigen::OsqpEigen INTERFACE IMPORTED)
+set_target_properties(OsqpEigen::OsqpEigen PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/local/include/OsqpEigen")
+set(OsqpEigen_FOUND TRUE)
+set(OsqpEigen_INCLUDE_DIRS "/usr/local/include/OsqpEigen")
+set(OsqpEigen_LIBRARIES "")       # 只有头文件
+
+# -------------------------- 正式查找 --------------------------
+find_package(Eigen3   REQUIRED)
+find_package(OsqpEigen REQUIRED)
+
+# -------------------------- 导出给依赖本包的人 -----------------
+catkin_package(
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp tf2 tf2_geometry_msgs visualization_msgs
+  DEPENDS Eigen3 OsqpEigen
+)
+
+# -------------------------- 构建 --------------------------
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(${PROJECT_NAME}_node
+  src/mpc_node.cpp
+  src/mpc_core.cpp
+  src/mpc.cpp
+  src/mpc_viz.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
+  OsqpEigen::OsqpEigen
+)
+
+# -------------------------- 安装 --------------------------
+install(TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

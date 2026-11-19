@@ -1,0 +1,110 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(mpc_tracker)
+
+## 查找 Catkin 依赖
+find_package(catkin REQUIRED COMPONENTS
+  geometry_msgs
+  nav_msgs
+  roscpp
+  tf2
+  tf2_geometry_msgs
+  visualization_msgs
+)
+
+
+
+
+
+# --------------- Eigen3 ---------------
+# 只有头文件，没有库
+add_library(Eigen3::Eigen INTERFACE IMPORTED)
+set_target_properties(Eigen3::Eigen PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/local/include/eigen3")
+
+# 把旧式变量也填上，让 catkin_package 开心
+set(Eigen3_FOUND TRUE)
+set(Eigen3_INCLUDE_DIRS "/usr/local/include/eigen3")
+set(Eigen3_LIBRARIES "")   # 空即可
+
+# --------------- OsqpEigen ---------------
+# 同样只有头文件
+add_library(OsqpEigen::OsqpEigen INTERFACE IMPORTED)
+set_target_properties(OsqpEigen::OsqpEigen PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/local/include/OsqpEigen")
+
+set(OsqpEigen_FOUND TRUE)
+set(OsqpEigen_INCLUDE_DIRS "/usr/local/include/OsqpEigen")
+set(OsqpEigen_LIBRARIES "")
+
+
+
+
+
+## ------------------------------------------------
+## 查找外部库 (Eigen 和 OsqpEigen)
+## ------------------------------------------------
+## 确保你已经安装了 Eigen: sudo apt-get install libeigen3-dev
+find_package(Eigen3 REQUIRED)
+
+## 确保你已经从源码编译并 "sudo make install" 了 OsqpEigen
+## CMake 将在 /usr/local/lib/cmake/osqpeigen 查找它
+find_package(OsqpEigen REQUIRED)
+find_package(osqp REQUIRED)
+## ------------------------------------------------
+
+## catkin_package 宏
+## 声明要传递给依赖项目的头文件、库和依赖
+catkin_package(
+ INCLUDE_DIRS include
+#  LIBRARIES mpc_tracker
+ CATKIN_DEPENDS geometry_msgs nav_msgs roscpp tf2 tf2_geometry_msgs visualization_msgs
+ DEPENDS Eigen3 OsqpEigen
+)
+
+###########
+## Build ##
+###########
+
+## 指定头文件位置
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIR}
+  ${OsqpEigen_INCLUDE_DIRS} # 添加 OsqpEigen 的头文件
+)
+
+## 声明 C++ 可执行文件
+## 它由 ROS 节点 (mpc_tracker_node.cpp) 和 MPC 算法 (mpc.cpp) 共同编译
+add_executable(mpc_tracker_node
+  src/mpc_node.cpp
+  src/mpc_core.cpp
+  src/mpc.cpp 
+  src/mpc_viz.cpp
+)
+
+## 链接库
+## 将可执行文件链接到它需要的库
+target_link_libraries(mpc_tracker_node
+  ${catkin_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  OsqpEigen::OsqpEigen # 正确链接 OsqpEigen
+)
+
+#############
+## Install ##
+#############
+
+## 安装可执行文件
+install(TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+## 安装 launch 文件
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+## 安装 config 文件
+install(DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)

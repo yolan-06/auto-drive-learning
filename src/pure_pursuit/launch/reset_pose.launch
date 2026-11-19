@@ -1,0 +1,20 @@
+<launch>
+
+    <arg name="model_name" default="scout" />
+
+    <arg name="x"   default="27.1298794923" />
+    <arg name="y"   default="-6.9410942368" />
+    <arg name="z"   default="0.0" />
+
+    <arg name="yaw" default="-2.3030" />
+
+
+    <node pkg="pure_pursuit" type="reset_robot_pose.py" name="reset_robot_pose_node" output="screen">
+        <param name="model_name" value="$(arg model_name)" />
+        <param name="x"          value="$(arg x)" />
+        <param name="y"          value="$(arg y)" />
+        <param name="z"          value="$(arg z)" />
+        <param name="yaw"        value="$(arg yaw)" />
+    </node>
+
+</launch>

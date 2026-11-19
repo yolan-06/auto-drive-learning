@@ -1,0 +1,13 @@
+<launch>
+  
+  <arg name="waypoints_file" default="/home/t/catkin_gps/src/pure_pursuit/src/global_path_with_velocity.csv" />
+  <arg name="mpc_horizon" default="30" />
+  <arg name="mpc_dt" default="0.1" />
+  <arg name="loop_rate" default="30" /> <node pkg="mpc_tracker" type="mpc_tracker_node" name="mpc_tracker_node" output="screen">
+    <param name="waypoints_file" value="$(arg waypoints_file)" />
+    <param name="mpc_horizon" value="$(arg mpc_horizon)" />
+    <param name="mpc_dt" value="$(arg mpc_dt)" />
+    <param name="loop_rate" value="$(arg loop_rate)" />
+  </node>
+
+</launch>
